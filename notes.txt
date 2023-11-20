@@ -26,3 +26,52 @@ Scaling policy
         > May result in queries being queued and taking longer to complete
         > Only if the system estimates there's enough query load to keep the cluster busy for at least 6 minutes
         > After 5 to 6 consecutive successful checks
+
+Snowflake editions
+------------------
+> Standard: Introductory level
+> Enterprise: Additional features for the needs of largescale enterprises
+> Business Critical: Even higher levels of data protection for organisations with extremely sensitive data
+> Virtual Private: Highest level of security
+
+Snowflake pricing
+-----------------
+> Pay only what you need
+> Scalable amount of storage at affordable cloud price
+> Pricing depending on the region and cloud platform
+> Compute and storage costs decoupled
+> Storage
+    > Monthly storage fees
+    > Based on average storage used per month
+    > Cost calculated after compression
+    > If we pay upfront for pre-defined capacity we get a discounted rate
+> Compute
+    > Charged for active warehouses per hour
+    > Depending on the size of the warehouse
+    > Billed by second (minimum of 1 min.)
+    > Charged in Snowflake credits
+> We only get charged for data moving out of Snowflake (not bringing data into Snowflake)
+> We are not charged if we want to share data with another snowflake account within the same region using the same cloud provider
+
+Roles in snowflake
+------------------
+> A user gets assigned different roles and a role has one or many privileges
+> Custom roles can be created that can inherit privilges from other roles
+> Important roles (hierarchy from top to bottom):
+    > ACCOUNTADMIN
+        > Combines everything that SYSADMIN and SECURITYADMIN can do
+        > Top level role in the system
+        > Should be granted only to a limited number of users
+    > SECURITYADMIN
+        > USERADMIN role is granted to SECURITYADMIN
+        > Can manage users and roles
+        > Can manage any object grant globally
+    > SYSADMIN
+        > Create warehouses and databases (and more objects like schemas)
+        > Recommended that all custom roles are assigned
+    > USERADMIN
+        > Dedicated to user and role management only
+        > Can create users and roles
+    > PUBLIC
+        > Automatically granted to every user
+        > Can create own objects like every other role
