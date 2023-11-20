@@ -75,3 +75,28 @@ Roles in snowflake
     > PUBLIC
         > Automatically granted to every user
         > Can create own objects like every other role
+
+Loading data
+------------
+> Bulk loading (batch loading)
+    > Most frequent method of data loading for large amount of data
+    > Uses warehouses
+    > Loading from stages
+    > COPY command
+    > Transformations are possible
+> Continuous loading
+    > Designed to load small volumes of data
+    > Loading takes place automatically once they are added to stages
+    > Latest result is available for analysis
+    > Uses Snowpipe (serverless feature)
+
+Understanding stages
+--------------------
+> These are database objects that have properties like location of data files where data can be loaded from
+> Categories:
+    > External stage
+        > Facilitated by an external cloud provider like AWS S3, GCP Bucket, Azure Blob Storage
+        > Can be created using `CREATE STAGE` command which has properties like URL, access settings, etc.
+        > It can incur additional costs if stage is present in a different region or cloud platform
+    > Internal stage
+        > local storage maintained by Snowflake
