@@ -1,0 +1,28 @@
+Snowflake interface (snowsight):
+--------------------------------
+> Worksheets: Write/run queries and code
+
+Architecture:
+-------------
+> Data is compressed and stored in blobs (AWS S3, Azure Blob Storage, GCP Buckets)
+> Virtual warehouses: A set of virtual compute engines query the data stored in blobs (also perform MPP wherein multiple servers come together to process big data)
+> Cloud providers help to manage all of this: Managing infrastructure, access control, security, optimizer and metadata
+> Virtual warehouse sizes (no. of servers): 
+    > XS - 1, S - 2, M - 4, L - 8, XL - 16, 4XL - 128
+    > Billed by minute (min. 1 minute)
+    > Multi-clustering: When you a multiple queries to execute but 1 virtual warehouse is not sufficient, then you can use multi clustering which brings in multiple virtual warehouses together (like a cluster) so that queries dont get queued up
+
+Scaling policy
+--------------
+> Scaling is required when the workload is high (more queries to be processed) 
+> Policies
+    > Standard:
+        > This is the default scaling policy
+        > Prevents/minimizes queuing by favoring starting additional clusters over conserving credits
+        > Cluster starts immeditely when either a query is queued or the system detects that there are more queries than can be executed by the currently available clusters
+        > Cluster shuts down after 2 to 3 consecutive successful checks (performed at 1 minute intervals) which determine whether the load on the least-loaded cluster could be redistributed to the other clusters 
+    > Economy
+        > Conserves credits by favoring keeping running clusters fully loaded rather than starting additional clusters
+        > May result in queries being queued and taking longer to complete
+        > Only if the system estimates there's enough query load to keep the cluster busy for at least 6 minutes
+        > After 5 to 6 consecutive successful checks
