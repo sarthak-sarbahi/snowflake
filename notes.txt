@@ -106,3 +106,36 @@ Understanding stages
     > Load raw data into a table with one column of type VARIANT (this can handle JSONs)
     > Analyse and parse
     > Flatten the hierarchical data and load
+
+> Performance optimization
+    > Traditional ways:
+        > Add indexes and primary keys
+        > Create table partitions
+        > Analyze the query execution table plan
+        > Remove unnecessary full table scans
+    > In snowflake:
+        > Automatically managed micro-partitions
+        > Assign approriate data types
+        > Sizing virtual warehouses
+        > Cluster keys
+        > Create dedicated virtual warehouses separated according to different workloads
+        > Scaling up for known patterns of high work load (process complex queries)
+        > Scaling out dynamically for unkown pattern of work load (more concurrent users/queries)
+        > Maximize automatic cache usage
+
+> Caching
+    > Automatic process to speed up queries
+    > If query is executed twice, results are cached and can be re-used
+    > Results are cached for 24 hours or until underlying data has changed
+    > Ensure similar queries go on the same warehouse
+
+> Clustering
+    > Cluster key
+        > Subset of rows to locate the data in micro partitions
+        > For large tables this improves the scan efficiency in our queries
+    > Snowflake automatically maintains these cluster keys
+    > We can manually customize cluster keys
+    > Clustering is mainly for very large tables (multiple TBs)
+    > Columns that are used most frequently in WHERE clause should be used for clustering
+    > If you use filters on two columns then the table can also benefit from two cluster keys
+    > Columns that are frequently used in joins
