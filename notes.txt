@@ -100,3 +100,9 @@ Understanding stages
         > It can incur additional costs if stage is present in a different region or cloud platform
     > Internal stage
         > local storage maintained by Snowflake
+
+> Load unstructured data
+    > Create a stage
+    > Load raw data into a table with one column of type VARIANT (this can handle JSONs)
+    > Analyse and parse
+    > Flatten the hierarchical data and load
