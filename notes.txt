@@ -150,3 +150,16 @@ Understanding stages
     > Edit trust relationship for IAM role (paste values from integration object properties using DESC)
         > STORAGE_AWS_IAM_USER_ARN ==> 'AWS key' inside trust relationship JSON
         > STORAGE_AWS_EXTERNAL_ID ==> 'ExternalId' inside trust relationship JSON
+
+> Snowflake & Azure (load data from storage account to Snowflake)
+    > Create integration object
+    > Grant permission to snowflake using AZURE_CONSENT_URL
+    > Add role assignment to storage account
+
+> Snowflake & GCP (load data from GCS bucket)
+    > Create integration object
+    > Add member to GCS buckets (STORAGE_GCP_SERVICE_ACCOUNT) and assign storage related role
+
+> Unload data
+    > Data from a snowflake table can be exported out as a file to a stage (S3, storage account or GCS)
+    > Need to have write access to the bucket/container
