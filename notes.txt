@@ -139,3 +139,14 @@ Understanding stages
     > Columns that are used most frequently in WHERE clause should be used for clustering
     > If you use filters on two columns then the table can also benefit from two cluster keys
     > Columns that are frequently used in joins
+
+> Snowflake & AWS (load data from S3 bucket to Snowflake)
+    > Go to IAM and create a role
+    > Select 'Another AWS Account'
+    > Get AWS account ID
+    > Enable 'Require External ID'
+    > Grant S3 related permissions
+    > Create integration object in Snowflake
+    > Edit trust relationship for IAM role (paste values from integration object properties using DESC)
+        > STORAGE_AWS_IAM_USER_ARN ==> 'AWS key' inside trust relationship JSON
+        > STORAGE_AWS_EXTERNAL_ID ==> 'ExternalId' inside trust relationship JSON
