@@ -192,3 +192,12 @@ Understanding stages
         > Add role assignment 'Storage Queue Data Contributor' to notification integration
     > Enable notification integration so that notifications can be received by Snowflake
     > Create pipe in snowflake
+
+> Time travel retention time
+    > Standard: Time travel up to 1 day
+    > Enterprise: Time travel up to 90 days
+    > Business critical: Time travel up to 90 days
+    > Virtual private: Time travel up to 90 days
+
+> Time travel cost
+    > We do not prefer to set 90 days as time travel retention time because of additional storage costs incurred by snowflake
