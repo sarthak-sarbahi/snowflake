@@ -163,3 +163,19 @@ Understanding stages
 > Unload data
     > Data from a snowflake table can be exported out as a file to a stage (S3, storage account or GCS)
     > Need to have write access to the bucket/container
+
+> Snowpipe
+    > Enables loading once a file appears in a bucket
+    > If data needs to be available immediately for analysis
+    > Snowpipe uses serverless features instead of warehouses
+    > High level steps:
+        > Create a stage object
+        > Create and test COPY command
+        > Create a pipe
+        > Setup S3 notification (to trigger snowpipe)
+            > Copy value of notification_channel (Using DESC on pipe)
+            > In S3 bucket, go to event notifications and create one
+            > Enable 'all object create events'
+            > In Destination, select SQS queue and enter ARN
+    > Ingestion can take upto 1 minute
+    > Indeed snowpipe is not intented for batch loading but for continous loading. For batch loading we should just use the COPY command
