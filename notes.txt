@@ -164,7 +164,7 @@ Understanding stages
     > Data from a snowflake table can be exported out as a file to a stage (S3, storage account or GCS)
     > Need to have write access to the bucket/container
 
-> Snowpipe
+> Snowpipe (AWS)
     > Enables loading once a file appears in a bucket
     > If data needs to be available immediately for analysis
     > Snowpipe uses serverless features instead of warehouses
@@ -179,3 +179,16 @@ Understanding stages
             > In Destination, select SQS queue and enter ARN
     > Ingestion can take upto 1 minute
     > Indeed snowpipe is not intented for batch loading but for continous loading. For batch loading we should just use the COPY command
+
+> Snowpipe for Azure
+    > Setup storage integration and create stage
+    > Setup queue storage and notification
+        > Go to queues in storage account and create one
+        > Create event subscription in storage account
+            > In event type, select blob created
+            > Endpoint type, select storage queue
+            > Make sure event grid is registered in your subscription
+        > Grant approval to AZURE_CONSENT_URL (DESCRIBE NOTIFICATION INTEGRATION)
+        > Add role assignment 'Storage Queue Data Contributor' to notification integration
+    > Enable notification integration so that notifications can be received by Snowflake
+    > Create pipe in snowflake
