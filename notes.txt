@@ -201,3 +201,10 @@ Understanding stages
 
 > Time travel cost
     > We do not prefer to set 90 days as time travel retention time because of additional storage costs incurred by snowflake
+
+> Fail safe
+    > Protection of historical data in case of disaster
+    > Non-configurable 7 day period for permanent tables
+    > Period starts immediately after time travel period ends
+    > No user interaction and recoverable only by Snowflake
+    > Contributes to storage cost
