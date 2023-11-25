@@ -208,3 +208,25 @@ Understanding stages
     > Period starts immediately after time travel period ends
     > No user interaction and recoverable only by Snowflake
     > Contributes to storage cost
+
+> Table types
+    > Permanent
+        > Created with CREATE TABLE syntax
+        > Provides time travel retention period (max 90 days)
+        > Enabled with fail safe
+        > They will be present until dropped
+        > Used for permanent data
+    > Transient
+        > Created with CREATE TRANSIENT syntax
+        > Provides time travel retention period (max 1 day)
+        > No fail safe
+        > They will be present until dropped
+        > Used for data where storage costs need to be minimized and extra data protection not required
+    > Temporary
+        > Created with CREATE TEMPORARY syntax
+        > Provides time travel retention period (max 1 day)
+        > No fail safe
+        > They will be present only in session (every worksheet accounts for a new session)
+        > Used for non-permanent data
+    > These above mentioned types are available for other database objects as well like database, schema, etc.
+    > For temporary table, no naming conflicts with permanent/transient tables
