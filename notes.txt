@@ -244,3 +244,24 @@ Understanding stages
     > For databases, schemas, and tables, a clone does not contribute to the overall data storage for the object until operations are performed on the clone that modify existing data or add new data.
     > A clone is an independent object. Therefore if we update the source object this will not be reflected in the clone.
     > If we clone a table this clone will also contain the data of the source table from the moment it has been cloned - even though no additional storage is needed for the initial clone.
+
+> Data sharing
+    > Usually this can be also a rather complicated process
+    > Data sharing without actual copy of the data and up to date
+    > Shared data can be consumed by the own compute resource
+    > Non-Snowflake users can also access through a reader account
+    > Data sharing with non Snowflake users
+        > We can create a reader account within our account
+        > We have to pay for the compute resources used by the reader account
+        > High level steps
+            > New reader account: Independent instance with own URL and own compute resources
+            > Share data: Share database and table
+            > Create users: An admin creates users and roles
+            > Create database: In reader account, create database from share
+        > When a new table is created in the producer but not part of share for consumer then it is not visible to reader account
+        > If you make changes to data that is part of the share at the producer account end, those changes will be immediately reflected at consumer account end
+
+> Views
+    > A normal view will reflect the SQL query when shared with a stakeholder
+    > A secured view is more strict in terms of data protection and giving away information to the shared user
+    > A view can only be shared if it is a secure view
