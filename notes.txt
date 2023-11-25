@@ -230,3 +230,17 @@ Understanding stages
         > Used for non-permanent data
     > These above mentioned types are available for other database objects as well like database, schema, etc.
     > For temporary table, no naming conflicts with permanent/transient tables
+
+> Zero copy cloning
+    > Create copies of a database, schema and table
+    > Cloned object is independent from original table
+    > Easy to copy metadata and improved storage management
+    > Create backups for development purpose
+    > Works with time travel too
+    > Temporary tables cannot be cloned to a permanent table
+    > Any structure of the object and metadata is inherited (clustering keys, comments, etc.)
+    > Objects that can be cloned: Databases, schemas and tables (permanent and transient)
+    > Configuration objects that can be cloned: Stages, file formats and tasks 
+    > For databases, schemas, and tables, a clone does not contribute to the overall data storage for the object until operations are performed on the clone that modify existing data or add new data.
+    > A clone is an independent object. Therefore if we update the source object this will not be reflected in the clone.
+    > If we clone a table this clone will also contain the data of the source table from the moment it has been cloned - even though no additional storage is needed for the initial clone.
