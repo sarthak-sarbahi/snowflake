@@ -265,3 +265,13 @@ Understanding stages
     > A normal view will reflect the SQL query when shared with a stakeholder
     > A secured view is more strict in terms of data protection and giving away information to the shared user
     > A view can only be shared if it is a secure view
+
+> Data sampling
+    > Row or bernoulli method
+        > Every row is chosen with percentage p
+        > More "randomness"
+        > Smaller tables
+    > Block or system method
+        > Every block is chosen with percentage p
+        > More effective processing
+        > Larger tables
