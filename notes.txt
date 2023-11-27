@@ -275,3 +275,10 @@ Understanding stages
         > Every block is chosen with percentage p
         > More effective processing
         > Larger tables
+
+> Scheduling tasks
+    > Tasks can be used to schedule SQL statements
+    > Standalone tasks and trees of tasks
+    > Trees of tasks: Every task has one parent
+        > Before creating a child task, suspend the parent task
+    > We can add a WHEN clause while creating tasks to enforce certain conditions
