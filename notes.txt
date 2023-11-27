@@ -282,3 +282,14 @@ Understanding stages
     > Trees of tasks: Every task has one parent
         > Before creating a child task, suspend the parent task
     > We can add a WHEN clause while creating tasks to enforce certain conditions
+
+> Streams
+    > Stream is an object that records DML (insert, update and delete) changes to a table
+    > This process is called change data capture
+    > Data can be consumed from a stream object only once
+    > Types of streams
+        > Standard: This is the default stream type and it captures all INSERT, UPDATE and DELETE
+        > Append only: It captures only APPEND operations
+    > Streams can also be consumed by CREATE OR REPLACE statement
+    > The CHANGES clause can be used to see changes in a table (a configurtion CHANGE_TRACKING needs to be enabled on the table)
+    > The output for a stream includes the same columns as the source table along with three additional columns
