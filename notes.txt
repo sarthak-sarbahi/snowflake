@@ -103,213 +103,230 @@ Understanding stages
 
 Load unstructured data
 ----------------------
-    > Create a stage
-    > Load raw data into a table with one column of type VARIANT (this can handle JSONs)
-    > Analyse and parse
-    > Flatten the hierarchical data and load
+> Create a stage
+> Load raw data into a table with one column of type VARIANT (this can handle JSONs)
+> Analyse and parse
+> Flatten the hierarchical data and load
 
 Performance optimization
 ------------------------
-    > Traditional ways:
-        > Add indexes and primary keys
-        > Create table partitions
-        > Analyze the query execution table plan
-        > Remove unnecessary full table scans
-    > In snowflake:
-        > Automatically managed micro-partitions
-        > Assign approriate data types
-        > Sizing virtual warehouses
-        > Cluster keys
-        > Create dedicated virtual warehouses separated according to different workloads
-        > Scaling up for known patterns of high work load (process complex queries)
-        > Scaling out dynamically for unkown pattern of work load (more concurrent users/queries)
-        > Maximize automatic cache usage
+> Traditional ways:
+    > Add indexes and primary keys
+    > Create table partitions
+    > Analyze the query execution table plan
+    > Remove unnecessary full table scans
+> In snowflake:
+    > Automatically managed micro-partitions
+    > Assign approriate data types
+    > Sizing virtual warehouses
+    > Cluster keys
+    > Create dedicated virtual warehouses separated according to different workloads
+    > Scaling up for known patterns of high work load (process complex queries)
+    > Scaling out dynamically for unkown pattern of work load (more concurrent users/queries)
+    > Maximize automatic cache usage
 
 Caching
 -------
-    > Automatic process to speed up queries
-    > If query is executed twice, results are cached and can be re-used
-    > Results are cached for 24 hours or until underlying data has changed
-    > Ensure similar queries go on the same warehouse
+> Automatic process to speed up queries
+> If query is executed twice, results are cached and can be re-used
+> Results are cached for 24 hours or until underlying data has changed
+> Ensure similar queries go on the same warehouse
 
 Clustering
 ----------
-    > Cluster key
-        > Subset of rows to locate the data in micro partitions
-        > For large tables this improves the scan efficiency in our queries
-    > Snowflake automatically maintains these cluster keys
-    > We can manually customize cluster keys
-    > Clustering is mainly for very large tables (multiple TBs)
-    > Columns that are used most frequently in WHERE clause should be used for clustering
-    > If you use filters on two columns then the table can also benefit from two cluster keys
-    > Columns that are frequently used in joins
+> Cluster key
+    > Subset of rows to locate the data in micro partitions
+    > For large tables this improves the scan efficiency in our queries
+> Snowflake automatically maintains these cluster keys
+> We can manually customize cluster keys
+> Clustering is mainly for very large tables (multiple TBs)
+> Columns that are used most frequently in WHERE clause should be used for clustering
+> If you use filters on two columns then the table can also benefit from two cluster keys
+> Columns that are frequently used in joins
 
 Snowflake & AWS (load data from S3 bucket to Snowflake)
 -------------------------------------------------------
-    > Go to IAM and create a role
-    > Select 'Another AWS Account'
-    > Get AWS account ID
-    > Enable 'Require External ID'
-    > Grant S3 related permissions
-    > Create integration object in Snowflake
-    > Edit trust relationship for IAM role (paste values from integration object properties using DESC)
-        > STORAGE_AWS_IAM_USER_ARN ==> 'AWS key' inside trust relationship JSON
-        > STORAGE_AWS_EXTERNAL_ID ==> 'ExternalId' inside trust relationship JSON
+> Go to IAM and create a role
+> Select 'Another AWS Account'
+> Get AWS account ID
+> Enable 'Require External ID'
+> Grant S3 related permissions
+> Create integration object in Snowflake
+> Edit trust relationship for IAM role (paste values from integration object properties using DESC)
+    > STORAGE_AWS_IAM_USER_ARN ==> 'AWS key' inside trust relationship JSON
+    > STORAGE_AWS_EXTERNAL_ID ==> 'ExternalId' inside trust relationship JSON
 
 Snowflake & Azure (load data from storage account to Snowflake)
 ---------------------------------------------------------------
-    > Create integration object
-    > Grant permission to snowflake using AZURE_CONSENT_URL
-    > Add role assignment to storage account
+> Create integration object
+> Grant permission to snowflake using AZURE_CONSENT_URL
+> Add role assignment to storage account
 
 Snowflake & GCP (load data from GCS bucket)
 -------------------------------------------
-    > Create integration object
-    > Add member to GCS buckets (STORAGE_GCP_SERVICE_ACCOUNT) and assign storage related role
+> Create integration object
+> Add member to GCS buckets (STORAGE_GCP_SERVICE_ACCOUNT) and assign storage related role
 
 Unload data
 -----------
-    > Data from a snowflake table can be exported out as a file to a stage (S3, storage account or GCS)
-    > Need to have write access to the bucket/container
+> Data from a snowflake table can be exported out as a file to a stage (S3, storage account or GCS)
+> Need to have write access to the bucket/container
 
 Snowpipe (AWS)
 --------------
-    > Enables loading once a file appears in a bucket
-    > If data needs to be available immediately for analysis
-    > Snowpipe uses serverless features instead of warehouses
-    > High level steps:
-        > Create a stage object
-        > Create and test COPY command
-        > Create a pipe
-        > Setup S3 notification (to trigger snowpipe)
-            > Copy value of notification_channel (Using DESC on pipe)
-            > In S3 bucket, go to event notifications and create one
-            > Enable 'all object create events'
-            > In Destination, select SQS queue and enter ARN
-    > Ingestion can take upto 1 minute
-    > Indeed snowpipe is not intented for batch loading but for continous loading. For batch loading we should just use the COPY command
+> Enables loading once a file appears in a bucket
+> If data needs to be available immediately for analysis
+> Snowpipe uses serverless features instead of warehouses
+> High level steps:
+    > Create a stage object
+    > Create and test COPY command
+    > Create a pipe
+    > Setup S3 notification (to trigger snowpipe)
+        > Copy value of notification_channel (Using DESC on pipe)
+        > In S3 bucket, go to event notifications and create one
+        > Enable 'all object create events'
+        > In Destination, select SQS queue and enter ARN
+> Ingestion can take upto 1 minute
+> Indeed snowpipe is not intented for batch loading but for continous loading. For batch loading we should just use the COPY command
 
 Snowpipe for Azure
 ------------------
-    > Setup storage integration and create stage
-    > Setup queue storage and notification
-        > Go to queues in storage account and create one
-        > Create event subscription in storage account
-            > In event type, select blob created
-            > Endpoint type, select storage queue
-            > Make sure event grid is registered in your subscription
-        > Grant approval to AZURE_CONSENT_URL (DESCRIBE NOTIFICATION INTEGRATION)
-        > Add role assignment 'Storage Queue Data Contributor' to notification integration
-    > Enable notification integration so that notifications can be received by Snowflake
-    > Create pipe in snowflake
+> Setup storage integration and create stage
+> Setup queue storage and notification
+    > Go to queues in storage account and create one
+    > Create event subscription in storage account
+        > In event type, select blob created
+        > Endpoint type, select storage queue
+        > Make sure event grid is registered in your subscription
+    > Grant approval to AZURE_CONSENT_URL (DESCRIBE NOTIFICATION INTEGRATION)
+    > Add role assignment 'Storage Queue Data Contributor' to notification integration
+> Enable notification integration so that notifications can be received by Snowflake
+> Create pipe in snowflake
 
 Time travel retention time
 --------------------------
-    > Standard: Time travel up to 1 day
-    > Enterprise: Time travel up to 90 days
-    > Business critical: Time travel up to 90 days
-    > Virtual private: Time travel up to 90 days
+> Standard: Time travel up to 1 day
+> Enterprise: Time travel up to 90 days
+> Business critical: Time travel up to 90 days
+> Virtual private: Time travel up to 90 days
 
 Time travel cost
 ----------------
-    > We do not prefer to set 90 days as time travel retention time because of additional storage costs incurred by snowflake
+> We do not prefer to set 90 days as time travel retention time because of additional storage costs incurred by snowflake
 
 Fail safe
 ---------
-    > Protection of historical data in case of disaster
-    > Non-configurable 7 day period for permanent tables
-    > Period starts immediately after time travel period ends
-    > No user interaction and recoverable only by Snowflake
-    > Contributes to storage cost
+> Protection of historical data in case of disaster
+> Non-configurable 7 day period for permanent tables
+> Period starts immediately after time travel period ends
+> No user interaction and recoverable only by Snowflake
+> Contributes to storage cost
 
 Table types
 -----------
-    > Permanent
-        > Created with CREATE TABLE syntax
-        > Provides time travel retention period (max 90 days)
-        > Enabled with fail safe
-        > They will be present until dropped
-        > Used for permanent data
-    > Transient
-        > Created with CREATE TRANSIENT syntax
-        > Provides time travel retention period (max 1 day)
-        > No fail safe
-        > They will be present until dropped
-        > Used for data where storage costs need to be minimized and extra data protection not required
-    > Temporary
-        > Created with CREATE TEMPORARY syntax
-        > Provides time travel retention period (max 1 day)
-        > No fail safe
-        > They will be present only in session (every worksheet accounts for a new session)
-        > Used for non-permanent data
-    > These above mentioned types are available for other database objects as well like database, schema, etc.
-    > For temporary table, no naming conflicts with permanent/transient tables
+> Permanent
+    > Created with CREATE TABLE syntax
+    > Provides time travel retention period (max 90 days)
+    > Enabled with fail safe
+    > They will be present until dropped
+    > Used for permanent data
+> Transient
+    > Created with CREATE TRANSIENT syntax
+    > Provides time travel retention period (max 1 day)
+    > No fail safe
+    > They will be present until dropped
+    > Used for data where storage costs need to be minimized and extra data protection not required
+> Temporary
+    > Created with CREATE TEMPORARY syntax
+    > Provides time travel retention period (max 1 day)
+    > No fail safe
+    > They will be present only in session (every worksheet accounts for a new session)
+    > Used for non-permanent data
+> These above mentioned types are available for other database objects as well like database, schema, etc.
+> For temporary table, no naming conflicts with permanent/transient tables
 
 Zero copy cloning
 -----------------
-    > Create copies of a database, schema and table
-    > Cloned object is independent from original table
-    > Easy to copy metadata and improved storage management
-    > Create backups for development purpose
-    > Works with time travel too
-    > Temporary tables cannot be cloned to a permanent table
-    > Any structure of the object and metadata is inherited (clustering keys, comments, etc.)
-    > Objects that can be cloned: Databases, schemas and tables (permanent and transient)
-    > Configuration objects that can be cloned: Stages, file formats and tasks 
-    > For databases, schemas, and tables, a clone does not contribute to the overall data storage for the object until operations are performed on the clone that modify existing data or add new data.
-    > A clone is an independent object. Therefore if we update the source object this will not be reflected in the clone.
-    > If we clone a table this clone will also contain the data of the source table from the moment it has been cloned - even though no additional storage is needed for the initial clone.
+> Create copies of a database, schema and table
+> Cloned object is independent from original table
+> Easy to copy metadata and improved storage management
+> Create backups for development purpose
+> Works with time travel too
+> Temporary tables cannot be cloned to a permanent table
+> Any structure of the object and metadata is inherited (clustering keys, comments, etc.)
+> Objects that can be cloned: Databases, schemas and tables (permanent and transient)
+> Configuration objects that can be cloned: Stages, file formats and tasks 
+> For databases, schemas, and tables, a clone does not contribute to the overall data storage for the object until operations are performed on the clone that modify existing data or add new data.
+> A clone is an independent object. Therefore if we update the source object this will not be reflected in the clone.
+> If we clone a table this clone will also contain the data of the source table from the moment it has been cloned - even though no additional storage is needed for the initial clone.
 
 Data sharing
 ------------
-    > Usually this can be also a rather complicated process
-    > Data sharing without actual copy of the data and up to date
-    > Shared data can be consumed by the own compute resource
-    > Non-Snowflake users can also access through a reader account
-    > Data sharing with non Snowflake users
-        > We can create a reader account within our account
-        > We have to pay for the compute resources used by the reader account
-        > High level steps
-            > New reader account: Independent instance with own URL and own compute resources
-            > Share data: Share database and table
-            > Create users: An admin creates users and roles
-            > Create database: In reader account, create database from share
-        > When a new table is created in the producer but not part of share for consumer then it is not visible to reader account
-        > If you make changes to data that is part of the share at the producer account end, those changes will be immediately reflected at consumer account end
+> Usually this can be also a rather complicated process
+> Data sharing without actual copy of the data and up to date
+> Shared data can be consumed by the own compute resource
+> Non-Snowflake users can also access through a reader account
+> Data sharing with non Snowflake users
+    > We can create a reader account within our account
+    > We have to pay for the compute resources used by the reader account
+    > High level steps
+        > New reader account: Independent instance with own URL and own compute resources
+        > Share data: Share database and table
+        > Create users: An admin creates users and roles
+        > Create database: In reader account, create database from share
+    > When a new table is created in the producer but not part of share for consumer then it is not visible to reader account
+    > If you make changes to data that is part of the share at the producer account end, those changes will be immediately reflected at consumer account end
 
 Views
 -----
-    > A normal view will reflect the SQL query when shared with a stakeholder
-    > A secured view is more strict in terms of data protection and giving away information to the shared user
-    > A view can only be shared if it is a secure view
+> A normal view will reflect the SQL query when shared with a stakeholder
+> A secured view is more strict in terms of data protection and giving away information to the shared user
+> A view can only be shared if it is a secure view
 
 Data sampling
 -------------
-    > Row or bernoulli method
-        > Every row is chosen with percentage p
-        > More "randomness"
-        > Smaller tables
-    > Block or system method
-        > Every block is chosen with percentage p
-        > More effective processing
-        > Larger tables
+> Row or bernoulli method
+    > Every row is chosen with percentage p
+    > More "randomness"
+    > Smaller tables
+> Block or system method
+    > Every block is chosen with percentage p
+    > More effective processing
+    > Larger tables
 
 Scheduling tasks
 ----------------
-    > Tasks can be used to schedule SQL statements
-    > Standalone tasks and trees of tasks
-    > Trees of tasks: Every task has one parent
-        > Before creating a child task, suspend the parent task
-    > We can add a WHEN clause while creating tasks to enforce certain conditions
+> Tasks can be used to schedule SQL statements
+> Standalone tasks and trees of tasks
+> Trees of tasks: Every task has one parent
+    > Before creating a child task, suspend the parent task
+> We can add a WHEN clause while creating tasks to enforce certain conditions
 
 Streams
 -------
-    > Stream is an object that records DML (insert, update and delete) changes to a table
-    > This process is called change data capture
-    > Data can be consumed from a stream object only once
-    > Types of streams
-        > Standard: This is the default stream type and it captures all INSERT, UPDATE and DELETE
-        > Append only: It captures only APPEND operations
-    > Streams can also be consumed by CREATE OR REPLACE statement
-    > The CHANGES clause can be used to see changes in a table (a configurtion CHANGE_TRACKING needs to be enabled on the table)
-    > The output for a stream includes the same columns as the source table along with three additional columns
+> Stream is an object that records DML (insert, update and delete) changes to a table
+> This process is called change data capture
+> Data can be consumed from a stream object only once
+> Types of streams
+    > Standard: This is the default stream type and it captures all INSERT, UPDATE and DELETE
+    > Append only: It captures only APPEND operations
+> Streams can also be consumed by CREATE OR REPLACE statement
+> The CHANGES clause can be used to see changes in a table (a configurtion CHANGE_TRACKING needs to be enabled on the table)
+> The output for a stream includes the same columns as the source table along with three additional columns
+
+Materialized views
+------------------
+> We have a view that is queried frequently and that a long time to be processed
+> We can create a materialized view to solve that problem
+> Using any SELECT statement to create these views
+> Results will be stored in a separate table and this will be updated automatically based on the base table (when changes are made to the base table)
+> Materialized views getting refreshed incur additional costs because the compute for the same is managed by Snowflake (not a digital warehouse owned by us)
+> When to use a materialized view?
+    > A view takes a long time to be processed and is queried frequently
+    > Underlying data changes but not too often (if the change frequency is too high then tasks and streams could be a better alternative)
+> When not to create a materialized view?
+    > Underlying does not change very frequently
+> Limitations:
+    > Joins including self joins are not supported
+    > Limited amount of aggregate functions
+    > UDFs, HAVING, ORDER BY and LIMIT clauses are not supported
