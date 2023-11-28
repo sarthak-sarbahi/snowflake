@@ -330,3 +330,10 @@ Materialized views
     > Joins including self joins are not supported
     > Limited amount of aggregate functions
     > UDFs, HAVING, ORDER BY and LIMIT clauses are not supported
+
+Dynamic data masking
+--------------------
+> Mask PII sensitive information in columns (this enables column level security)
+> A masking policy once created can be applied to multiple columns
+> It is not possible to drop a policy if it already applied to one or more columns
+> It is possible to alter a policy if already applied to one or more columns
