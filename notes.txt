@@ -337,3 +337,42 @@ Dynamic data masking
 > A masking policy once created can be applied to multiple columns
 > It is not possible to drop a policy if it already applied to one or more columns
 > It is possible to alter a policy if already applied to one or more columns
+
+Access control
+--------------
+> Two important concepts:
+    > Discretionary access control (DAC): Each object has an owner who can grant access to that object
+    > Role based access control (RBAC): Access privileges are assigned to roles which in turn assigned to users
+> A user can have a role to which multiple privileges are assigned (level of access to an object)
+> Best practise is to attach custom roles to SYSADMIN
+> ACCOUNTADMIN
+    > Top level role to manage and view all objects
+    > All configurations on account level
+    > Account operation like create reader account, billing, etc.
+    > First user will have this role assigned
+    > Initial setup and managing account level objects
+    > Best practises:
+        > Very controlled assignment strongly recommended
+        > Multi factor authentication
+        > At least two users should be assigned to this role
+        > Avoid creating objects with this role unless you have to
+> SECURITYADMIN
+    > Access to account admin tab
+    > Create and manage users and roles
+    > Grant and revoke privilesg to roles
+> SYSADMIN
+    > Create and manage objects
+    > Create and manage warehouses, databases, tables, etc.
+    > Custom roles should be assigned to the SYSADMIN role as the parent
+    > This role has the ability to grant privileges on warehouses, databases and other objects to the custom roles
+> Custom roles
+    > Customize roles to our needs and create own hierarchies
+    > Custom roles are usually created by SECURITYADMIN
+    > Should be leading up to the SYSADMIN role
+> USERADMIN
+    > Grant users and roles
+    > Not for granting privileges 
+> PUBLIC
+    > Least privileged role (bottom of hierarchy)
+    > Every user is automatically assigned to this role
+    > Can own objects and these objects are then available to everyone
