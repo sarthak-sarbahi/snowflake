@@ -376,3 +376,19 @@ Access control
     > Least privileged role (bottom of hierarchy)
     > Every user is automatically assigned to this role
     > Can own objects and these objects are then available to everyone
+> Best practises
+    > Virtual warehouses
+        > Enable auto suspend
+        > Enable auto resume
+        > Set appropriate timeouts
+    > Table design
+        > Appripriate table type:
+            > Staging tables should be transient
+            > Production tables should be permanent
+            > Development tables should be transient
+        > Use appropriate data types
+        > Set cluster keys only if necessary
+    > Retention period
+        > Staging database: 0 days (transient)
+        > Production tables: 4 to 7 days (1 day min)
+        > Large high churn tables: 0 days (transient)
