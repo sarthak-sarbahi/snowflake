@@ -19,7 +19,7 @@ CREATE STORAGE INTEGRATION gcp_integration
 -- View the properties of the storage integration
 DESC STORAGE integration gcp_integration;
 
--- Create database and schem
+-- Create database and schema
 CREATE OR REPLACE DATABASE DEMO_DB;
 CREATE OR REPLACE SCHEMA DEMO_SCHEMA;
 
@@ -45,7 +45,7 @@ CREATE OR REPLACE TABLE DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING (
     country_of_origin VARCHAR(15)
 );
 
--- Create a stream object to capture changes to ITEMS table
+-- Create a stream object to capture changes to ITEMS_STAGING table
 CREATE OR REPLACE STREAM DEMO_DB.DEMO_SCHEMA.ITEMS_STREAM ON TABLE DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING;
 
 -- Validate the copy command to catch any errors if present (no data is loaded) 
