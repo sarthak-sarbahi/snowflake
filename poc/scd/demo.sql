@@ -90,6 +90,8 @@ CREATE OR REPLACE TABLE DEMO_DB.DEMO_SCHEMA.REJECTED_RECORDS (
 );
 -- Insert error records in a separate table
 INSERT INTO DEMO_DB.DEMO_SCHEMA.REJECTED_RECORDS SELECT rejected_record FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
+-- View rejected records
+SELECT * FROM DEMO_DB.DEMO_SCHEMA.REJECTED_RECORDS;
 -- Load data and ignore error records
 COPY INTO DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING
     FROM @DEMO_DB.DEMO_SCHEMA.DEMO_STAGE
@@ -133,7 +135,7 @@ COPY INTO DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING
     file_format= (type = csv field_delimiter=',' skip_header=1)
     files = ('household_items.csv')
     ON_ERROR = 'CONTINUE';
--- Insert into final table using MERGE
+-- Insert into final table (Step 1)
 MERGE INTO DEMO_DB.DEMO_SCHEMA.ITEMS_HIST AS I
 USING DEMO_DB.DEMO_SCHEMA.ITEMS_STREAM AS S
 ON I.item_serial_number = S.item_serial_number
@@ -141,7 +143,7 @@ WHEN MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
     UPDATE SET I.crnt_flag = 0
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
     INSERT (item_serial_number, item_name, country_of_origin) VALUES (S.item_serial_number, S.item_name, S.country_of_origin);
--- Insert into final table 
+-- Insert into final table (Step 2)
 INSERT INTO DEMO_DB.DEMO_SCHEMA.ITEMS_HIST 
 SELECT 
     item_serial_number, 
@@ -152,16 +154,10 @@ SELECT
     1 AS crnt_flag
 FROM DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING 
 WHERE item_serial_number IN (SELECT DISTINCT(item_serial_number) FROM DEMO_DB.DEMO_SCHEMA.ITEMS_HIST WHERE crnt_flag = 0); 
--- Drop staging table
+-- Truncate staging table
 TRUNCATE TABLE DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING;
 -- View data in final table
 SELECT * FROM DEMO_DB.DEMO_SCHEMA.ITEMS_HIST ORDER BY item_serial_number;
--- Recreate staging table
-CREATE OR REPLACE TABLE DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING (
-    item_serial_number INT,
-    item_name VARCHAR(20),
-    country_of_origin VARCHAR(15)
-);
 -- Insert next batch of records in staging table
 COPY INTO DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING
     FROM @DEMO_DB.DEMO_SCHEMA.DEMO_STAGE
@@ -241,7 +237,7 @@ COPY INTO DEMO_DB.DEMO_SCHEMA.ITEMS_STAGING
     file_format= (type = csv field_delimiter=',' skip_header=1)
     files = ('household_items.csv')
     ON_ERROR = 'CONTINUE';
--- Perform upsert in latest final table
+-- Perform upsert in latest final latest table
 MERGE INTO DEMO_DB.DEMO_SCHEMA.ITEMS_LATEST AS I
 USING DEMO_DB.DEMO_SCHEMA.ITEMS_STREAM AS S
 ON I.item_serial_number = S.item_serial_number
